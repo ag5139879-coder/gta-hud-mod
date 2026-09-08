@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>GTAHudMod</AssemblyName>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!--
+    All reference DLLs sit flat at the repo root alongside this file.
+    This auto-references every DLL found there except this project's
+    own output, so you don't need to list filenames one by one.
+    NOTE: GTAHudMod.cs does NOT need to be listed separately - the SDK
+    already auto-includes every .cs file in this folder by default.
+  -->
+  <ItemGroup>
+    <RefDlls Include="*.dll" Exclude="bin\**;obj\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="@(RefDlls->'%(Filename)')">
+      <HintPath>%(RefDlls.FullPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>
