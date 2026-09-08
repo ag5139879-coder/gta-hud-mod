@@ -1,4 +1,4 @@
-: Build GTAHudMod
+name: Build GTAHudMod
 
 on:
   workflow_dispatch:
@@ -24,4 +24,3 @@ jobs:
         with:
           name: GTAHudMod
           path: bin/Release/net6.0/GTAHudMod.dll
-        
