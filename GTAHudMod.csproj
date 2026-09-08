@@ -1,74 +1,26 @@
-<Project Sdk="Microsoft.NET.Sdk">
+name: Build GTAHudMod
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>disable</Nullable>
-    <AssemblyName>GTAHudMod</AssemblyName>
-    <!-- IMGUI/OnGUI mods don't need "Copy Local" for game DLLs -->
-    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
 
-  <!--
-    EDIT THIS ONE LINE: point it at your BONELAB install folder.
-    Steam default is usually something like:
-      C:\Program Files (x86)\Steam\steamapps\common\BONELAB
-    Oculus default is usually something like:
-      C:\Program Files\Oculus\Software\Software\stress-level-zero-inc-bonelab
-  -->
-  <PropertyGroup>
-    <BonelabDir>C:\CHANGE\ME\TO\YOUR\BONELAB\FOLDER</BonelabDir>
-  </PropertyGroup>
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
 
-  <ItemGroup>
-    <!-- Core MelonLoader + Harmony -->
-    <Reference Include="MelonLoader">
-      <HintPath>$(BonelabDir)\MelonLoader\net6\MelonLoader.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="0Harmony">
-      <HintPath>$(BonelabDir)\MelonLoader\net6\0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
 
-    <!-- Unity engine modules needed for OnGUI/IMGUI drawing -->
-    <Reference Include="UnityEngine">
-      <HintPath>$(BonelabDir)\MelonLoader\Il2CppAssemblies\UnityEngine.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(BonelabDir)\MelonLoader\Il2CppAssemblies\UnityEngine.CoreModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>$(BonelabDir)\MelonLoader\Il2CppAssemblies\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+      - name: Build
+        run: dotnet build GTAHudMod.csproj -c Release
 
-    <!-- IL2CPP interop runtime -->
-    <Reference Include="Il2CppInterop.Runtime">
-      <HintPath>$(BonelabDir)\MelonLoader\net6\Il2CppInterop.Runtime.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-
-    <!--
-      The assembly that actually contains SLZ.Marrow.Player_Health.
-      Its filename varies by game version - after running BONELAB once
-      with MelonLoader installed, look in:
-        BONELAB\MelonLoader\Il2CppAssemblies\
-      for a file with "SLZ" or "Marrow" in the name (commonly something
-      like Il2CppSLZ.Marrow.dll) and point this at it. If you can't find
-      Player_Health in any of them, see the notes in GTAHudMod.cs for how
-      to search the dump properly.
-    -->
-    <Reference Include="Il2CppSLZ.Marrow">
-      <HintPath>$(BonelabDir)\MelonLoader\Il2CppAssemblies\Il2CppSLZ.Marrow.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="GTAHudMod.cs" />
-  </ItemGroup>
-
-</Project>
+      - name: Upload built DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: GTAHudMod
+          path: bin/Release/net6.0/GTAHudMod.dll
