@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download LabFusion.dll from Release
-        run: curl -L -o LabFusion.dll "PASTE_YOUR_RELEASE_ASSET_URL_HERE"
+        run: curl -L -o LabFusion.dll "https://github.com/ag5139879-coder/gta-hud-mod/releases/tag/assets"
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
